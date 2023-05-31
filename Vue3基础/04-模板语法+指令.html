@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./vue3.js"></script>
+    <style>
+      .red {
+        background-color: red;
+      }
+      .yellow {
+        background-color: yellow;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 插值语法：双大括号，当做js地盘执行 -->
+      <div>{{name}}</div>
+      <div>{{10+20}}</div>
+      <div>{{isLogin?"已登录":"未登录"}}</div>
+      <!-- 指令 -->
+      <!-- 动态绑定class -->
+      <div v-bind:class="color1">改变背景颜色1</div>
+      <div :class="color2">改变背景颜色2</div>
+      <div :class="isLogin ? 'red':'yellow'">改变背景颜色3</div>
+      <!-- 动态绑定多个属性在标签上 -->
+      <img :src="imgUrl" alt="" :width="imgWidth" />
+      <!-- 如果有多个需要绑定的属性在一个标签上，可以抽离出来一个对象 -->
+      <img v-bind="imgObj" />
+      <!-- 事件绑定  -->
+      <!-- <button v-on:click="changeLogin()">改变isLogin</button> -->
+      <!-- 事件绑定简写，@事件名，事件函数可以省略() -->
+      <button @click="changeLogin">改变isLogin</button>
+      <!-- 关于显示与隐藏 -->
+      <div :class="isShow?'':'hidden'">
+        我是动态显示与隐藏的-动态绑定class实现
+      </div>
+      <!-- v-show：利用display的属性值 -->
+      <div v-show="isShow">我是动态显示与隐藏的-指令v-show</div>
+      <!-- v-if：该标签在html代码中已移除 -->
+      <div v-if="isShow">我是动态创建与删除的</div>
+      <!-- v-for：遍历循环 -->
+      <ul>
+        <li v-for="item,index in arr">{{item}}-{{index}}</li>
+      </ul>
+    </div>
+  </body>
+  <script>
+    const obj = {
+      data() {
+        return {
+          name: 'xiaoming',
+          isLogin: true,
+          color1: 'red',
+          color2: 'yellow',
+          imgUrl: 'https://sponsors.vuejs.org/images/vehikl.png',
+          imgWidth: 200,
+          // 抽离出来
+          imgObj: {
+            src: 'https://sponsors.vuejs.org/images/vehikl.png',
+            width: 200,
+          },
+          isShow: true,
+          arr: ['aaa', 'bbb', 'ccc'],
+        };
+      },
+      methods: {
+        // 事件中访问data通过this.xxx
+        changeLogin() {
+          console.log('change login', this.isLogin);
+          this.isLogin = !this.isLogin;
+        },
+      },
+    };
+    // app是个全局变量，用来调试Vue中data的属性的
+    var app = Vue.createApp(obj).mount('#root');
+  </script>
+</html>

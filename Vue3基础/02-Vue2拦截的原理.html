@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">1111</div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    // Vue2底层原理
+    // 缺陷：1.只能一个一个属性进行拦截，对于属性多的对象，需要进行循环，如果对象是有嵌套的对象，就需要递归。
+    // 2.无法监听数组的改变
+    const obj = {};
+    Object.defineProperty(obj, 'myname', {
+      get() {
+        console.log('get');
+        return root.innerHTML;
+      },
+      set(value) {
+        console.log('set', value);
+        root.innerHTML = value;
+      },
+    });
+  </script>
+</html>

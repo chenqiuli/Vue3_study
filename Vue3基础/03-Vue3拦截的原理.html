@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">1111</div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    // Vue3底层原理：利用ES6的proxy拦截
+    /*
+      优点：1.对整个obj对象进行拦截，代理整个对象
+            2.直接监听数组变化
+    */
+
+    /*
+      Vue3兼容了Vue2的拦截方案
+    */
+
+    const obj = {};
+    // vm是生成的代理对象，使用vm对象才会拦截到对象的改变
+    const vm = new Proxy(obj, {
+      get(obj, key) {
+        console.log('get', root.innerHTML);
+        return obj[key];
+      },
+      set(obj, key, value) {
+        console.log('set');
+        obj[key] = value;
+        root.innerHTML = value;
+      },
+    });
+  </script>
+</html>

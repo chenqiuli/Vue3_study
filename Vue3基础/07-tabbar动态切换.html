@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      ul li {
+        user-select: none;
+        cursor: pointer;
+        flex: 1;
+        list-style: none;
+        text-align: center;
+      }
+      ul {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+      }
+
+      li.active {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <ul>
+        <li
+          v-for="item,index in list"
+          :class="ActiveIdx === index ? 'active':''"
+          @click="handleClick(index)"
+        >
+          {{item}}
+        </li>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          list: ['films', 'cinmeas', 'mine'],
+          ActiveIdx: 0,
+        };
+      },
+      methods: {
+        handleClick(idx) {
+          this.ActiveIdx = idx;
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

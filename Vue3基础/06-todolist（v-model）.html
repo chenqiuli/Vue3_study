@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      {{inputValue}}
+      <!-- v-model让input输入框与data双向绑定 -->
+      <input type="text" v-model="inputValue" />
+      <button @click="handleAdd">添加</button>
+      <ul>
+        <li v-for="item,index in list">
+          {{item}}
+          <button @click="handleDelete(index)">delete</button>
+        </li>
+      </ul>
+      <div v-show="!list.length">暂无待办事项</div>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const obj = {
+      data() {
+        return {
+          inputValue: '',
+          list: ['aaa', 'bbb', 'ccc'],
+        };
+      },
+      methods: {
+        handleAdd() {
+          // console.log('add');
+          this.list = [...this.list, this.inputValue];
+        },
+        handleDelete(idx) {
+          // console.log(idx);
+          this.list = this.list.filter((item, index) => index !== idx);
+        },
+      },
+    };
+    var app = Vue.createApp(obj).mount('#root');
+  </script>
+</html>

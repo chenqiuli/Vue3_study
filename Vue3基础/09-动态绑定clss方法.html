@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .red {
+        color: red;
+      }
+      .green {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 单个类名 -->
+      <div :class="isRed ? 'red':'green'">红色或绿色</div>
+      <!-- 对象写法 -->
+      <div :class="classObj">多个class类名-对象写法</div>
+      <!-- 数组写法 -->
+      <div :class="classArr">多个class类名-数组写法</div>
+
+      <button @click="handleClick">添加类名</button>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          isRed: true,
+          // 是true的就会设置上，可以动态添加或删除
+          classObj: {
+            aaa: true,
+            bbb: false,
+            ccc: true,
+          },
+          // 可以动态添加或删除
+          classArr: ['aaa'],
+        };
+      },
+      methods: {
+        // 由于Vue3是利用ES6的Proxy进行拦截的，不存在于data对象内的属性也可以监听和改变
+        handleClick() {
+          this.classArr.push('bbb');
+          this.classObj.ddd = true;
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

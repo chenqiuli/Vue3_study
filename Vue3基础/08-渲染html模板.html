@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <div>{{myHtml}}</div>
+      <!-- 在网站上动态渲染任意HTML是非常危险的，容易造成XSS漏洞 -->
+      <div v-html="myHtml"></div>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: 'nann',
+          myHtml: '<div style="color:red;">11</div>',
+        };
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>
