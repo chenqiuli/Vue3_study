@@ -1,0 +1,3 @@
+key值作用：性能的保障，为了重用和重排现有的元素，虚拟dom树是存在于数组和真实dom之间的一个对象，是来模拟真实dom的，方便新老虚拟dom树做对比，对比是通过js引擎对比的，对比完后再更新后真实dom中，有改变的再通过补丁的方式更新到真实dom中，
+改变数组的方法：push pop unshift shift arr[0]='xxx' 未改变数组的方法：map filter
+every some concat

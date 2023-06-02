@@ -51,7 +51,7 @@ if (支持Proxy) {
 }
 ```
 
-- 模板语法：插值，双大括号，当做 JS 地盘执行
+- 模板语法：插值，双大括号，当做 JS 地盘执行，可以数字运算，三元运算符
 
 ```js
 <div>{{ name }}</div>;
@@ -137,21 +137,65 @@ var app = Vue.createApp(obj).mount('#root');
   };
   ```
 
-  - v-for：遍历数组
+  - v-for：遍历数组和对象，数组支持解构
 
   ```js
+  // 数组
   <ul>
-    <li v-for="item,index in arr">
-      {{ item }}-{{ index }}
+    <li v-for="{text,status},index in arr">
+      <span v-if="status === 1">{{ text }}</span>
     </li>
   </ul>;
   const obj = {
     data() {
       return {
-        arr: ['aaa', 'bbb', 'ccc'],
+        arr: [
+          {
+            text: '手机1',
+            status: 0,
+          },
+          {
+            text: '手机2',
+            status: 1,
+          },
+          {
+            text: '手机3',
+            status: 1,
+          },
+        ],
       };
     },
   };
+  // 对象
+  <ul>
+    <li v-for="value,key,index in obj" style="margin-bottom: 10px">
+      值：{{ value }} <br />
+      键：{{ key }} <br />
+      索引：{{ index }}
+    </li>
+  </ul>;
+  const obj = {
+    data() {
+      return {
+        obj: {
+          name: 'xiaoqiu',
+          age: 18,
+          location: '大连',
+        },
+      };
+    },
+  };
+  ```
+
+  - v-for 与 v-if：不可同用在一个标签上
+
+  ```html
+  <ul>
+    <!-- 1.template标签实际上不会被创建出来，只是作为包裹多节点的标签 -->
+    <template v-for="{text,status} in arr">
+      <li v-if="status === 1">{{text}}</li>
+    </template>
+  </ul>
   ```
 
   - v-on：绑定事件，可简写为 @xx

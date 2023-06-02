@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <div style="color: red; background: #ccc">红色字体，灰色背景1</div>
+      <!-- 对象形式 -->
+      <div :style="styleObj">红色字体，灰色背景2</div>
+      <!-- 数组形式 -->
+      <div :style="styleArr">红色字体，灰色背景3</div>
+      <!-- 数组内合并对象形式 -->
+      <div :style="[styleObj1,styleObj2]">红色字体，灰色背景4</div>
+
+      <button @click="handleAjax">添加字体大小</button>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          styleObj: {
+            color: 'red',
+            background: '#ccc',
+            marginTop: '10px',
+          },
+          styleArr: [
+            {
+              color: 'red',
+              background: '#ccc',
+              marginTop: '10px',
+            },
+          ],
+          styleObj1: {
+            color: 'red',
+            background: '#ccc',
+          },
+          styleObj2: {
+            marginTop: '10px',
+          },
+        };
+      },
+      methods: {
+        handleAjax() {
+          this.styleObj.fontSize = '20px';
+          this.styleArr.push({
+            fontSize: '20px',
+          });
+          this.styleObj1.fontSize = '20px';
+          this.styleObj2.marginBottom = '10px';
+        },
+      },
+    }).mount('#root');
+  </script>
+</html>

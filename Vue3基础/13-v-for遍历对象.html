@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <ul>
+        <li v-for="value,key,index in obj" style="margin-bottom: 10px">
+          值：{{value}} <br />键：{{key}} <br />索引：{{index}}
+        </li>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: 'shhsh',
+          obj: {
+            name: 'xiaoqiu',
+            age: 18,
+            location: '大连',
+          },
+        };
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

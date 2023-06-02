@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <div>方案一</div>
+      <input type="text" v-model="inputValue1" @input="handleInput" />
+      <ul>
+        <li v-for="item in list" :key="item">{{item}}</li>
+      </ul>
+      <div>方案二</div>
+      <input type="text" v-model="inputValue2" />
+      <ul>
+        <li v-for="item in dealList()" :key="item">{{item}}</li>
+      </ul>
+      <div>方案三</div>
+      <!-- 指令方案 -->
+      <input type="text" v-model="inputValue3" />
+      <ul>
+        <template v-for="item in list" :key="item">
+          <li v-if="item.includes(inputValue3)">{{item}}</li>
+        </template>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          inputValue1: '',
+          inputValue2: '',
+          inputValue3: '',
+          list: ['aaa', 'abb', 'aab', 'bcc', 'abc', 'bcd', 'add', 'acd'],
+          bakList: ['aaa', 'abb', 'aab', 'bcc', 'abc', 'bcd', 'add', 'acd'],
+        };
+      },
+      methods: {
+        handleInput() {
+          // 方案一：（复制）this.list会改变原数组，如果不对原数组做一次复制的话
+          this.list = this.bakList.filter((item) =>
+            item.includes(this.inputValue1)
+          );
+        },
+        // 方案二：函数变量方式
+        dealList() {
+          return this.list.filter((item) => item.includes(this.inputValue2));
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

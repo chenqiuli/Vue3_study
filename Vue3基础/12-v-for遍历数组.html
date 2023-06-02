@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      ul li {
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <ul>
+        <!-- 1.支持解构 -->
+        <!-- 2.v-for与v-if不可同用，使用了v-for的标签上识别不了item和index属性 -->
+        <!-- 3.这种障眼法方式，实际上所有的li都会被创建出来，只是通过样式隐藏了 -->
+        <li v-for="{text,status},index in arr">
+          <span v-if="status === 1">{{text}}</span>
+        </li>
+      </ul>
+
+      <ul>
+        <!-- 1.template标签实际上不会被创建出来，只是作为包裹多节点的标签 -->
+        <template v-for="{text,status} in arr">
+          <li v-if="status === 1">{{text}}</li>
+        </template>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: '哈哈哈',
+          arr: [
+            {
+              text: '手机1',
+              status: 0,
+            },
+            {
+              text: '手机2',
+              status: 1,
+            },
+            {
+              text: '手机3',
+              status: 1,
+            },
+          ],
+        };
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

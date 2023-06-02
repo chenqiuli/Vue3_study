@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <ul>
+        <li v-for="item in list">
+          {{item.name}} -
+          <span v-if="item.status === 0">未完成</span>
+          <span v-else-if="item.status === 1">未付款</span>
+          <span v-else-if="item.status === 2">已付款</span>
+          <span v-else>已发货</span>
+        </li>
+      </ul>
+      <div>使用div包裹多标签，该div会被渲染</div>
+      <div v-if="isShow">
+        <div>111</div>
+        <div>222</div>
+        <div>333</div>
+      </div>
+      <div>使用template包裹多标签，该template不会被渲染</div>
+      <template v-if="isShow">
+        <div>111</div>
+        <div>222</div>
+        <div>333</div>
+      </template>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          list: [
+            { name: '手机', status: 0 },
+            { name: '衣服', status: 1 },
+            { name: '化妆品', status: 2 },
+            { name: '图书', status: 3 },
+          ],
+          isShow: true,
+        };
+      },
+    }).mount('#root');
+  </script>
+</html>
