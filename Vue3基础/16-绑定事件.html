@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 内联事件处理器 -->
+      {{count1}}
+      <button @click="count++">add</button>
+      <button @click="count--">delete</button>
+      {{count2}}
+      <button @click="handleClick(1,2,3,$event)">点击</button>
+      <!-- 方法事件处理器 -->
+      <ul @click="handleUlClick">
+        <li @click="handleClick111">111</li>
+        <li @click="(event) => handleClick222(1,2,3,event)">222</li>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          count1: 0,
+          count2: 0,
+        };
+      },
+      methods: {
+        handleClick(a, b, c, event) {
+          console.log(a, b, c, event);
+          this.count2++;
+        },
+        // 可以拿到event事件
+        handleClick111(event) {
+          console.log('111', event.target);
+        },
+        handleClick222(a, b, c, event) {
+          console.log(a, b, c, event);
+          event.stopPropagation();
+        },
+        handleUlClick() {
+          console.log('handleUlClick');
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

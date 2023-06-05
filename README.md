@@ -68,7 +68,7 @@ var app = Vue.createApp(obj).mount('#root');
 
 - 指令
 
-  - v-bind：动态绑定属性值，可以简写为 :xx
+  - v-bind：动态绑定属性值，可以简写为 :xx="XXX"，XXX 当做 JS 地盘执行
 
   ```html
   <div v-bind:class="color1">改变背景颜色1</div>
@@ -192,7 +192,7 @@ var app = Vue.createApp(obj).mount('#root');
   ```html
   <ul>
     <!-- 1.template标签实际上不会被创建出来，只是作为包裹多节点的标签 -->
-    <template v-for="{text,status} in arr">
+    <template v-for="{text,status},index in arr" :key="index">
       <li v-if="status === 1">{{text}}</li>
     </template>
   </ul>
@@ -200,17 +200,114 @@ var app = Vue.createApp(obj).mount('#root');
 
   - v-on：绑定事件，可简写为 @xx
 
+  ```html
+  <div id="root">
+    <!-- 内联事件处理器 -->
+    {{count1}}
+    <button @click="count++">add</button>
+    <button @click="count--">delete</button>
+    {{count2}}
+    <button @click="handleClick(1,2,3,$event)">点击</button>
+    <!-- 方法事件处理器 -->
+    <ul @click="handleUlClick">
+      <li @click="handleClick111">111</li>
+      <li @click="(event) => handleClick222(1,2,3,event)">222</li>
+    </ul>
+  </div>
+  ```
+
   ```js
-  <button v-on:click="changeLogin()">改变isLogin</button>
-  <button @click="changeLogin">改变isLogin</button>
   const obj = {
     data() {
       return {
-        arr: ['aaa', 'bbb', 'ccc'],
+        count1: 0,
+        count2: 0,
       };
+    },
+    methods: {
+      handleClick(a, b, c, event) {
+        console.log(a, b, c, event);
+        this.count2++;
+      },
+      // 可以拿到event事件
+      handleClick111(event) {
+        console.log('111', event.target);
+      },
+      handleClick222(a, b, c, event) {
+        console.log(a, b, c, event);
+        event.stopPropagation();
+      },
+      handleUlClick() {
+        console.log('handleUlClick');
+      },
     },
   };
   ```
+
+  - 事件修饰符
+
+    - @click.stop：阻止冒泡
+    - @click.self：让父节点的事件不要影响到子节点
+    - @click.prevent：阻止默认行为，表单的提交，a 链接跳转
+    - @click.once：只能点击一次
+
+    ```html
+    <div id="root">
+      <ul @click="handleUlClick">
+        <!-- @click.stop 阻止冒泡 -->
+        <li @click.stop="handleClick111">111</li>
+        <li @click="(event) => handleClick222(event)">222</li>
+      </ul>
+
+      <!-- @click.self 让handleUlClick2的事件只作用于自己身上，子节点点了不会有冒泡行为 -->
+      <ul @click.self="handleUlClick2">
+        <li @click="handleClick333">333</li>
+      </ul>
+
+      <!-- @click.once：只能点击一次 -->
+      <div @click.once="handleOnce">我只能点击一次</div>
+
+      <!-- @click.prevent：阻止默认行为 -->
+      <form action="" @click.prevent="handleSubmit">
+        <input type="submit" value="submit" />
+      </form>
+    </div>
+    ```
+
+    ```js
+    const app = Vue.createApp({
+      data() {
+        return {};
+      },
+      methods: {
+        // 可以拿到event事件
+        handleClick111(event) {
+          console.log('111', event.target);
+        },
+        handleClick222(event) {
+          console.log(event);
+          event.stopPropagation();
+        },
+        handleUlClick() {
+          console.log('handleUlClick');
+        },
+        handleUlClick2() {
+          console.log('handleUlClick2');
+        },
+        handleClick333() {
+          console.log('handleClick333');
+        },
+        handleOnce() {
+          console.log('once');
+        },
+        handleSubmit(event) {
+          // event.preventDefault();
+          console.log('submit');
+        },
+      },
+    });
+    app.mount('#root');
+    ```
 
   - v-html：动态渲染 html 节点，谨慎使用，遇到不安全的脚本会有 XSS 攻击
 
@@ -223,4 +320,48 @@ var app = Vue.createApp(obj).mount('#root');
       };
     },
   };
+  ```
+
+  - v-model：表单与数据 双向绑定
+    - 原理：表单上动态绑定 value 值，通过 onChange 事件改变 value 值，实现双向绑定
+
+  ```html
+  <div id="root">
+    <h2>输入框-{{inputValue}}</h2>
+    <input type="text" v-model="inputValue" />
+    <h2>多行文本输入-{{textareaValue}}</h2>
+    <textarea type="text" v-model="textareaValue"></textarea>
+    <h2>单个复选框-{{isChecked}}</h2>
+    <input type="checkbox" v-model="isChecked" />是
+    <h2>多个复选框-{{checkArr}}</h2>
+    <input type="checkbox" v-model="checkArr" value="篮球" />篮球
+    <input type="checkbox" v-model="checkArr" value="乒乓球" />乒乓球
+    <input type="checkbox" v-model="checkArr" value="足球" />足球
+    <h2>单选框-{{picked}}</h2>
+    <input type="radio" value="篮球" v-model="picked" />篮球
+    <input type="radio" value="乒乓球" v-model="picked" />乒乓球
+    <input type="radio" value="足球" v-model="picked" />足球
+    <h2>下拉框-{{selected}}</h2>
+    <select v-model="selected">
+      <option value="篮球">篮球</option>
+      <option value="乒乓球">乒乓球</option>
+      <option value="足球">足球</option>
+    </select>
+  </div>
+  ```
+
+  ```js
+  const app = Vue.createApp({
+    data() {
+      return {
+        inputValue: '',
+        textareaValue: '',
+        isChecked: true,
+        picked: '篮球',
+        checkArr: ['篮球'],
+        selected: '篮球',
+      };
+    },
+  });
+  app.mount('#root');
   ```

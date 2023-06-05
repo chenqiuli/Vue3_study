@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <h2>输入框-{{inputValue}}</h2>
+      <input type="text" v-model="inputValue" />
+      <h2>多行文本输入-{{textareaValue}}</h2>
+      <textarea type="text" v-model="textareaValue"></textarea>
+      <h2>单个复选框-{{isChecked}}</h2>
+      <input type="checkbox" v-model="isChecked" />是
+      <h2>多个复选框-{{checkArr}}</h2>
+      <input type="checkbox" v-model="checkArr" value="篮球" />篮球
+      <input type="checkbox" v-model="checkArr" value="乒乓球" />乒乓球
+      <input type="checkbox" v-model="checkArr" value="足球" />足球
+      <h2>单选框-{{picked}}</h2>
+      <input type="radio" value="篮球" v-model="picked" />篮球
+      <input type="radio" value="乒乓球" v-model="picked" />乒乓球
+      <input type="radio" value="足球" v-model="picked" />足球
+      <h2>下拉框-{{selected}}</h2>
+      <select v-model="selected">
+        <option value="篮球">篮球</option>
+        <option value="乒乓球">乒乓球</option>
+        <option value="足球">足球</option>
+      </select>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          inputValue: '',
+          textareaValue: '',
+          isChecked: true,
+          picked: '篮球',
+          checkArr: ['篮球'],
+          selected: '篮球',
+        };
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

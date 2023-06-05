@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .listItem {
+        display: flex;
+        height: 130px;
+        line-height: 130px;
+        width: 100%;
+        justify-content: space-around;
+        border: 1px solid #ccc;
+        padding: 10px 0;
+      }
+      .checkAll {
+        height: 50px;
+        line-height: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="checkAll">
+        <input
+          type="checkbox"
+          @change="handleAllChange"
+          v-model="isAllChecked"
+        />全选/全不选
+      </div>
+      <template v-for="item,index in datalist" :key="item.id">
+        <div class="listItem" v-if="datalist.length">
+          <input
+            type="checkbox"
+            v-model="checkList"
+            :value="item.id"
+            @change="handleItemChange"
+          />
+          <img :src="item.poster" alt="" />
+          <div>
+            <span>{{item.title}}</span>
+            <span>----</span>
+            <span>{{item.price}}</span>
+          </div>
+          <div>
+            <button @click="item.number--;" :disabled="item.number===1">
+              -
+            </button>
+            <span>{{item.number}}</span>
+            <button
+              @click="item.number++;"
+              :disabled="item.number===item.limit"
+            >
+              +
+            </button>
+          </div>
+          <div>
+            <input type="button" value="delete" @click="handleDel(item.id)" />
+          </div>
+        </div>
+      </template>
+      <div v-if="!datalist.length">购物车空空如也</div>
+      <div>总金额：{{totalCount()}}</div>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          isAllChecked: false,
+          checkList: [],
+          datalist: [
+            {
+              id: 1,
+              title: '商品1',
+              price: 10,
+              number: 1,
+              poster:
+                'https://p0.meituan.net/movie/dc2fed6001e809e4553f90cc6fad9a59245170.jpg@1l_1e_1c_128w_180h',
+              limit: 5,
+            },
+            {
+              id: 2,
+              title: '商品2',
+              price: 20,
+              number: 2,
+              poster:
+                'https://p0.meituan.net/moviemachine/3084e88f63eef2c6a0df576153a3fad0327782.jpg@1l_1e_1c_128w_180h',
+              limit: 5,
+            },
+            {
+              id: 3,
+              title: '商品3',
+              price: 30,
+              number: 3,
+              poster:
+                'https://p0.meituan.net/movie/897b8364755949226995144bfc2261ee4493381.jpg@1l_1e_1c_128w_180h',
+              limit: 5,
+            },
+          ],
+        };
+      },
+      methods: {
+        totalCount() {
+          const data = []; // 选中的checkData
+          this.datalist.map((item) => {
+            this.checkList.map((ele) => {
+              if (item.id === ele) {
+                data.push(item);
+              }
+            });
+          });
+          let count = 0; // 总和
+          data.forEach((item) => {
+            count += item.number * item.price;
+          });
+          return count;
+        },
+        handleDel(id) {
+          this.datalist = this.datalist.filter((item) => item.id !== id);
+          console.log(this.checkList);
+          // 同步更新checkList
+          this.checkList = this.checkList.filter((item) => item !== id);
+          // 同步全选
+          this.handleItemChange();
+        },
+        handleAllChange() {
+          this.checkList = this.isAllChecked
+            ? this.datalist.map((item) => item.id)
+            : [];
+        },
+        handleItemChange() {
+          if (!this.datalist.length) {
+            this.isAllChecked = false;
+            return;
+          }
+          this.isAllChecked = this.checkList.length === this.datalist.length;
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

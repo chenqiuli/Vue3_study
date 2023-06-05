@@ -39,11 +39,9 @@
           this.inputValue = e.target.value;
         },
         handleAdd() {
-          // console.log('add');
           this.list = [...this.list, this.inputValue];
         },
         handleDelete(idx) {
-          // console.log(idx);
           this.list = this.list.filter((item, index) => index !== idx);
         },
       },

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      ul li {
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      {{selected}}
+      <select v-model="selected">
+        <!-- :value="xxx"，xxx是JS地盘，:value="0",0是数字 -->
+        <option :value="0">未付款</option>
+        <option :value="1">已完成</option>
+        <option :value="2">已付款</option>
+        <option :value="3">已取消</option>
+      </select>
+      <ul>
+        <template v-for="{text,status} in arr">
+          <li v-if="status === selected">{{text}}</li>
+        </template>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          selected: 0,
+          arr: [
+            {
+              text: '未付款1',
+              status: 0,
+            },
+            {
+              text: '已完成1',
+              status: 1,
+            },
+            {
+              text: '已付款1',
+              status: 2,
+            },
+            {
+              text: '已取消1',
+              status: 3,
+            },
+            {
+              text: '未付款2',
+              status: 0,
+            },
+            {
+              text: '已完成2',
+              status: 1,
+            },
+            {
+              text: '已付款2',
+              status: 2,
+            },
+            {
+              text: '已取消2',
+              status: 3,
+            },
+          ],
+        };
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

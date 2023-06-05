@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #overlay {
+        background: rgba(0, 0, 0, 0.6);
+        width: 100%;
+        margin: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+      #center {
+        background-color: #fff;
+        border-radius: 5px;
+        padding-top: 15px;
+        padding-left: 30px;
+        padding-bottom: 15px;
+        width: 290px;
+        height: 160px;
+        position: fixed;
+        margin: auto;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 方案一：在center内输入文字，冒泡到外面了，需要阻止冒泡 -->
+      <!-- <button @click="isShow = !isShow">点击</button>
+      <div id="overlay" v-show="isShow" @click="isShow = false">
+        <div id="center" @click.stop>
+          <input type="text" />
+          <button @click="isShow = false">登录</button>
+        </div>
+      </div> -->
+      <!-- 方案二： 让父节点的事件只作用于自己身上-->
+      <button @click="isShow = !isShow">点击</button>
+      <div id="overlay" v-show="isShow" @click.self="isShow = false">
+        <div id="center">
+          <input type="text" />
+          <button @click="isShow = false">登录</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          isShow: false,
+        };
+      },
+      methods: {},
+    });
+    app.mount('#root');
+  </script>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <ul @click="handleUlClick">
+        <!-- @click.stop 阻止冒泡 -->
+        <li @click.stop="handleClick111">111</li>
+        <li @click="(event) => handleClick222(event)">222</li>
+      </ul>
+
+      <!-- @click.self 让handleUlClick2的事件只作用于自己身上，子节点点了不会有冒泡行为 -->
+      <ul @click.self="handleUlClick2">
+        <li @click="handleClick333">333</li>
+      </ul>
+
+      <!-- @click.once：只能点击一次 -->
+      <div @click.once="handleOnce">我只能点击一次</div>
+
+      <!-- @click.prevent：阻止默认行为 -->
+      <form action="" @click.prevent="handleSubmit">
+        <input type="submit" value="submit" />
+      </form>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {};
+      },
+      methods: {
+        // 可以拿到event事件
+        handleClick111(event) {
+          console.log('111', event.target);
+        },
+        handleClick222(event) {
+          console.log(event);
+          event.stopPropagation();
+        },
+        handleUlClick() {
+          console.log('handleUlClick');
+        },
+        handleUlClick2() {
+          console.log('handleUlClick2');
+        },
+        handleClick333() {
+          console.log('handleClick333');
+        },
+        handleOnce() {
+          console.log('once');
+        },
+        handleSubmit(event) {
+          // event.preventDefault();
+
+          console.log('submit');
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>
