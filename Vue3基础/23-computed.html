@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 双大括号支持表达式写法 -->
+      <div>{{name.slice(0,1).toUpperCase() + name.slice(1)}}</div>
+      <!-- 方法返回计算一个值 -->
+      <div>{{methodName()}}</div>
+      <div>{{methodName()}}</div>
+      <!-- 调用计算属性当属性调用 -->
+      <div>{{computedName}}</div>
+      <div>{{computedName}}</div>
+      <!--   -->
+      <div>{{computedDate}}</div>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: 'qiu',
+          year: 2012,
+          month: 12,
+          day: 10,
+        };
+      },
+      // 计算属性：会缓存，多次调用只会执行一次
+      computed: {
+        // 只读
+        computedName() {
+          console.log('计算属性');
+          return this.name.slice(0, 1).toUpperCase() + this.name.slice(1);
+        },
+        // 可写可读，不能在getter内发异步请求或更改DOM
+        computedDate: {
+          get() {
+            return `${this.year}-${this.month}-${this.day}`;
+          },
+
+          set(value) {
+            console.log(value);
+            [this.year, this.month, this.day] = value.split('-');
+          },
+        },
+      },
+      // 方法：不会缓存
+      methods: {
+        methodName() {
+          console.log('方法');
+          return this.name.slice(0, 1).toUpperCase() + this.name.slice(1);
+        },
+        // 事件处理器
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

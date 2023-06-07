@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <input type="text" v-model="text" />
+      <ul>
+        <li v-for="item,index in computedList" :key="item">{{item}}</li>
+      </ul>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          text: '',
+          list: ['aaa', 'abb', 'aab', 'bcc', 'abc', 'bcd', 'add', 'acd'],
+        };
+      },
+      computed: {
+        computedList() {
+          return this.list.filter((item) => item.includes(this.text));
+        },
+      },
+      methods: {},
+    });
+    app.mount('#root');
+  </script>
+</html>

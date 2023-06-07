@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root">
+      <input type="text" v-model="name" />
+      <select v-model="obj.year">
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+      </select>
+      <select v-model="obj.month">
+        <option value="12">12</option>
+        <option value="11">11</option>
+        <option value="10">10</option>
+      </select>
+      <select v-model="obj.day">
+        <option value="10">10</option>
+        <option value="9">9</option>
+        <option value="8">8</option>
+      </select>
+    </div>
+  </body>
+  <script src="./vue3.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: 'qiu',
+          obj: {
+            year: 2023,
+            month: 12,
+            day: 10,
+          },
+        };
+      },
+      // 侦听器：内可以异步请求和DOM操作
+      watch: {
+        // 监听字符串：时刻监听name的变化
+        name(value) {
+          console.log(value);
+        },
+        // 监听对象方式一：单个单个监听，
+        // 'obj.year'(value, oldValue) {
+        //   console.log(value, oldValue);
+        //   this.obj.year = value;
+        // },
+        // 'obj.month'(value, oldValue) {
+        //   console.log(value, oldValue);
+        //   this.obj.month = value;
+        // },
+        // 'obj.day'(value, oldValue) {
+        //   console.log(value, oldValue);
+        //   this.obj.day = value;
+        // },
+        // 方式二：把方法一同写到methods内，
+        // 'obj.year': 'objFun',
+        // 'obj.month': 'objFun',
+        // 'obj.day': 'objFun',
+        // 方式三：
+        obj: {
+          handler(value, oldValue) {
+            console.log(value, 'ajax');
+            this.obj = value;
+          },
+          // 无论其被嵌套多深,该回调都会调用
+          deep: true,
+          // 初始化就立马执行 ，相当于mounted生命周期
+          immediate: true,
+        },
+      },
+      methods: {
+        objFun(value, oldValue) {
+          console.log(value, oldValue);
+        },
+      },
+    });
+    app.mount('#root');
+  </script>
+</html>

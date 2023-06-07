@@ -7,19 +7,21 @@
 - Vue2 拦截的原理：Object.defineProperty
   - 缺点：1.只能一个一个属性进行拦截，对于属性多的对象，需要进行循环，如果对象是有嵌套的对象，就需要递归。 2.无法监听数组的改变
 
-```js
-<div id="root">1111</div>;
-const obj = {};
-Object.defineProperty(obj, 'myname', {
-  get() {
-    console.log('get');
-    return root.innerHTML;
-  },
-  set(value) {
-    console.log('set', value);
-    root.innerHTML = value;
-  },
-});
+```html
+<div id="root">1111</div>
+<script>
+  const obj = {};
+  Object.defineProperty(obj, 'myname', {
+    get() {
+      console.log('get');
+      return root.innerHTML;
+    },
+    set(value) {
+      console.log('set', value);
+      root.innerHTML = value;
+    },
+  });
+</script>
 ```
 
 - Vue3 拦截的原理：ES6 的 Proxy
@@ -53,17 +55,15 @@ if (支持Proxy) {
 
 - 模板语法：插值，双大括号，当做 JS 地盘执行，可以数字运算，三元运算符
 
-```js
-<div>{{ name }}</div>;
-const obj = {
+```html
+<div>{{ name }}</div>
+<script>
   data() {
     return {
       name: 'xiaoming',
     };
-  },
-};
-// app是个全局变量，用来调试Vue中data的属性的
-var app = Vue.createApp(obj).mount('#root');
+  }
+</script>
 ```
 
 - 指令
@@ -82,109 +82,106 @@ var app = Vue.createApp(obj).mount('#root');
   <div :class="classObj">多个class类名-对象写法</div>
   <!-- 数组写法 -->
   <div :class="classArr">多个class类名-数组写法</div>
-  ```
 
-  ```js
-  const obj = {
+  <script>
     data() {
-      return {
-        isLogin: true,
-        color1: 'red',
-        color2: 'yellow',
-        imgUrl: 'https://sponsors.vuejs.org/images/vehikl.png',
-        imgWidth: 200,
-        // 抽离出来
-        imgObj: {
-          src: 'https://sponsors.vuejs.org/images/vehikl.png',
-          width: 200,
-        },
-        // 是true的就会设置上，可以动态添加或删除
-        classObj: {
-          aaa: true,
-          bbb: false,
-          ccc: true,
-        },
-        // 可以动态添加或删除
-        classArr: ['aaa'],
-      };
-    },
-  };
+        return {
+          isLogin: true,
+          color1: 'red',
+          color2: 'yellow',
+          imgUrl: 'https://sponsors.vuejs.org/images/vehikl.png',
+          imgWidth: 200,
+          // 抽离出来
+          imgObj: {
+            src: 'https://sponsors.vuejs.org/images/vehikl.png',
+            width: 200,
+          },
+          // 是true的就会设置上，可以动态添加或删除
+          classObj: {
+            aaa: true,
+            bbb: false,
+            ccc: true,
+          },
+          // 可以动态添加或删除
+          classArr: ['aaa'],
+        };
+      },
+  </script>
   ```
 
   - v-show：display：none
 
-  ```js
-  <div v-show="isShow">我是动态显示与隐藏的-指令v-show</div>;
-  const obj = {
+  ```html
+  <div v-show="isShow">我是动态显示与隐藏的-指令v-show</div>
+  <script>
     data() {
-      return {
-        isShow: true,
-      };
-    },
-  };
+        return {
+          isShow: true,
+        };
+      },
+  </script>
   ```
 
   - v-if：节点在网页上动态创建与删除
 
-  ```js
-  <div v-if="isShow">我是动态创建与删除的</div>;
-  const obj = {
+  ```html
+  <div v-if="isShow">我是动态创建与删除的</div>
+  <script>
     data() {
-      return {
-        isShow: true,
-      };
-    },
-  };
+        return {
+          isShow: true,
+        };
+      },
+  </script>
   ```
 
   - v-for：遍历数组和对象，数组支持解构
 
-  ```js
-  // 数组
+  ```html
+  <!-- 遍历数组 -->
   <ul>
     <li v-for="{text,status},index in arr">
       <span v-if="status === 1">{{ text }}</span>
     </li>
-  </ul>;
-  const obj = {
-    data() {
-      return {
-        arr: [
-          {
-            text: '手机1',
-            status: 0,
-          },
-          {
-            text: '手机2',
-            status: 1,
-          },
-          {
-            text: '手机3',
-            status: 1,
-          },
-        ],
-      };
-    },
-  };
-  // 对象
+  </ul>
+  <script>
+    const obj = {
+      data() {
+        return {
+          arr: [
+            {
+              text: '手机1',
+              status: 0,
+            },
+            {
+              text: '手机2',
+              status: 1,
+            },
+            {
+              text: '手机3',
+              status: 1,
+            },
+          ],
+        };
+      },
+    };
+  </script>
+
+  <!-- 遍历对象  赚钱啊，工作工作工作工作谢冬玲 -->
   <ul>
     <li v-for="value,key,index in obj" style="margin-bottom: 10px">
       值：{{ value }} <br />
       键：{{ key }} <br />
       索引：{{ index }}
     </li>
-  </ul>;
-  const obj = {
-    data() {
-      return {
-        obj: {
-          name: 'xiaoqiu',
-          age: 18,
-          location: '大连',
-        },
-      };
-    },
-  };
+  </ul>
+  <script>
+    const obj = {
+      data() {
+        return { obj: { name: 'xiaoqiu', age: 18, location: '大连' } };
+      },
+    };
+  </script>
   ```
 
   - v-for 与 v-if：不可同用在一个标签上
@@ -214,34 +211,33 @@ var app = Vue.createApp(obj).mount('#root');
       <li @click="(event) => handleClick222(1,2,3,event)">222</li>
     </ul>
   </div>
-  ```
-
-  ```js
-  const obj = {
-    data() {
-      return {
-        count1: 0,
-        count2: 0,
-      };
-    },
-    methods: {
-      handleClick(a, b, c, event) {
-        console.log(a, b, c, event);
-        this.count2++;
+  <script>
+    const obj = {
+      data() {
+        return {
+          count1: 0,
+          count2: 0,
+        };
       },
-      // 可以拿到event事件
-      handleClick111(event) {
-        console.log('111', event.target);
+      methods: {
+        handleClick(a, b, c, event) {
+          console.log(a, b, c, event);
+          this.count2++;
+        },
+        // 可以拿到event事件
+        handleClick111(event) {
+          console.log('111', event.target);
+        },
+        handleClick222(a, b, c, event) {
+          console.log(a, b, c, event);
+          event.stopPropagation();
+        },
+        handleUlClick() {
+          console.log('handleUlClick');
+        },
       },
-      handleClick222(a, b, c, event) {
-        console.log(a, b, c, event);
-        event.stopPropagation();
-      },
-      handleUlClick() {
-        console.log('handleUlClick');
-      },
-    },
-  };
+    };
+  </script>
   ```
 
   - 事件修饰符
@@ -272,54 +268,49 @@ var app = Vue.createApp(obj).mount('#root');
         <input type="submit" value="submit" />
       </form>
     </div>
-    ```
-
-    ```js
-    const app = Vue.createApp({
-      data() {
-        return {};
-      },
+    <script>
       methods: {
-        // 可以拿到event事件
-        handleClick111(event) {
-          console.log('111', event.target);
+          // 可以拿到event事件
+          handleClick111(event) {
+            console.log('111', event.target);
+          },
+          handleClick222(event) {
+            console.log(event);
+            event.stopPropagation();
+          },
+          handleUlClick() {
+            console.log('handleUlClick');
+          },
+          handleUlClick2() {
+            console.log('handleUlClick2');
+          },
+          handleClick333() {
+            console.log('handleClick333');
+          },
+          handleOnce() {
+            console.log('once');
+          },
+          handleSubmit(event) {
+            // event.preventDefault();
+            console.log('submit');
+          },
         },
-        handleClick222(event) {
-          console.log(event);
-          event.stopPropagation();
-        },
-        handleUlClick() {
-          console.log('handleUlClick');
-        },
-        handleUlClick2() {
-          console.log('handleUlClick2');
-        },
-        handleClick333() {
-          console.log('handleClick333');
-        },
-        handleOnce() {
-          console.log('once');
-        },
-        handleSubmit(event) {
-          // event.preventDefault();
-          console.log('submit');
-        },
-      },
-    });
-    app.mount('#root');
+    </script>
     ```
 
   - v-html：动态渲染 html 节点，谨慎使用，遇到不安全的脚本会有 XSS 攻击
 
-  ```js
-  <div v-html="myHtml"></div>;
-  const obj = {
-    data() {
-      return {
-        myHtml: '<div style="color:red;">11</div>',
-      };
-    },
-  };
+  ```html
+  <div v-html="myHtml"></div>
+  <script>
+    {
+      data() {
+        return {
+          myHtml: '<div style="color:red;">11</div>',
+        };
+      },
+    }
+  </script>
   ```
 
   - v-model：表单与数据 双向绑定
@@ -348,20 +339,113 @@ var app = Vue.createApp(obj).mount('#root');
       <option value="足球">足球</option>
     </select>
   </div>
+  <script>
+    {
+      data() {
+        return {
+          inputValue: '',
+          textareaValue: '',
+          isChecked: true,
+          picked: '篮球',
+          checkArr: ['篮球'],
+          selected: '篮球',
+        };
+      },
+    }
+  </script>
   ```
 
-  ```js
-  const app = Vue.createApp({
-    data() {
-      return {
-        inputValue: '',
-        textareaValue: '',
-        isChecked: true,
-        picked: '篮球',
-        checkArr: ['篮球'],
-        selected: '篮球',
-      };
-    },
-  });
-  app.mount('#root');
+  - v-model 表单修饰符
+    - v-model.lazy
+    - v-model.number
+    - v-model.trim
+
+  ```html
+  <div id="root">
+    <!-- v-model.lazy：在 "change" 事件后同步更新而不是 "input" -->
+    <input type="text" v-model.lazy="input1" />
+    {{input1}}
+    <!-- v-model.number：用户输入自动转换为数字 -->
+    <input type="text" v-model.number="input2" />
+    {{input2}}
+    <!-- v-model.trim：去除前后两端空格 -->
+    <input type="text" v-model.trim="input3" />
+    {{input3}}
+  </div>
+  ```
+
+- computed 计算属性：会缓存，只会执行一次，重复调用从缓存读取。计算属性可读可写，视图层当属性调用
+
+  - 与 methods 的区别：computed 有缓存，methods 不会缓存。
+
+  ```html
+  <div id="root">
+    <!-- 方法返回计算一个值 -->
+    <div>{{methodName()}}</div>
+    <div>{{methodName()}}</div>
+    <!-- 调用计算属性当属性调用 -->
+    <div>{{computedName}}</div>
+    <div>{{computedName}}</div>
+    <!--   -->
+    <div>{{computedDate}}</div>
+  </div>
+  <script>
+    {
+      data() {
+        return {
+          name: 'qiu',
+          year: 2012,
+          month: 12,
+          day: 10,
+        };
+      },
+      // 计算属性：会缓存，多次调用只会执行一次
+      computed: {
+        // 只读
+        computedName() {
+          console.log('计算属性'); // 执行一次
+          return this.name.slice(0, 1).toUpperCase() + this.name.slice(1);
+        },
+        // 可写可读，不能在getter内发异步请求或更改DOM
+        computedDate: {
+          get() {
+            return `${this.year}-${this.month}-${this.day}`;
+          },
+
+          set(value) {
+            console.log(value);
+            [this.year, this.month, this.day] = value.split('-');
+          },
+        },
+      },
+      // 方法：不会缓存
+      methods: {
+        methodName() {
+          console.log('方法'); //执行多次
+          return this.name.slice(0, 1).toUpperCase() + this.name.slice(1);
+        },
+        // 事件处理器
+      },
+    }
+  </script>
+  ```
+
+- watch 侦听器：实时监听 data 对象内的属性，名字跟 data 内的属性一样
+
+  - 与 computed 的区别：computed 是同步返回计算结果，不可异步请求和 DOM 操作；watch 可以是只读的也可以是可写的，watch 可以实时监听 data 属性的值，getter 函数内可以异步请求和 DOM 操作。
+
+  - 监听普通字符串：
+
+  ```html
+  <div id="root">
+    <input type="text" v-model="name" />
+  </div>
+  <script>
+    watch: {
+      // 监听字符串：时刻监听name的变化
+      name(value) {
+        console.log(value);
+      },
+    }
+  </script>
   ```
