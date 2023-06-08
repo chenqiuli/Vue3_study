@@ -449,3 +449,111 @@ if (支持Proxy) {
     }
   </script>
   ```
+
+### 二、[Vite](https://cn.vitejs.dev/guide/) + Vue
+
+- 使用 Vite 安装
+
+```bash
+npm create vite@latest
+```
+
+- 单文件组件 SFC：由 template、script 和 style 组成
+
+```vue
+<template>
+  <div>
+    <ul>
+      <li v-for="item in menuList" :key="item">
+        {{ item }}
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      menuList: ['首页', '用户管理', '权限管理'],
+    };
+  },
+};
+</script>
+
+<!-- 局部样式 -->
+<style scoped>
+div {
+  width: 200px;
+}
+
+ul li {
+  padding: 20px;
+  cursor: pointer;
+}
+</style>
+```
+
+- 父传子： 父传子是单向数据流，父传给子的属性，子不允许修改；如果子要修改，可以将属性赋值成自己状态，或者在计算属性中改
+
+```vue
+<!-- 父组件 -->
+<template>
+  <!-- 1.单个单个透传，动态属性动态绑定 -->
+  <NavBar :title="title1" left="返回" right="首页" />
+  <!-- 2.在一个对象上传 -->
+  <NavBar
+    v-bind="{
+      title: '我的电影2',
+      left: '返回',
+      right: '首页',
+    }"
+  />
+  <!-- 3.对象放在data内，动态绑定传 -->
+  <NavBar v-bind="navBarObj" />
+</template>
+
+<script>
+import NavBar from './01-父传子/NavBar.vue';
+export default {
+  data() {
+    return {
+      title1: '我的电影1',
+      navBarObj: {
+        title: '我的电影3',
+        left: '返回',
+        right: '首页',
+      },
+    };
+  },
+  components: {
+    NavBar,
+  },
+};
+</script>
+<!-- 子组件 -->
+<template>
+  <div>
+    <h2>navbar</h2>
+    <button>{{ left }}</button>
+    <span>{{ computedTitle }}</span>
+    <button>{{ right }}</button>
+  </div>
+</template>
+<script>
+export default {
+  // 接收父组件的props参数，视图层访问不用this，逻辑层访问需要this.xxx
+  props: ['title', 'left', 'right'],
+  computed: {
+    computedTitle() {
+      return this.title + '-加工后的title';
+    },
+  },
+};
+</script>
+```
+
+### 三、Vue2 与 Vue3 的区别
+
+- Vue2 有 filters，Vue3 抛弃了
+- Vue2 单文件组件的 template 内需用一个根节点包裹，Vue3 可以多节点并存

@@ -1,0 +1,20 @@
+<template>
+  <div>
+    <Parent />
+  </div>
+</template>
+
+<script>
+import Parent from './Parent.vue';
+
+export default {
+  data() {
+    return {
+      value: 'App-父',
+    };
+  },
+  components: {
+    Parent,
+  },
+};
+</script>

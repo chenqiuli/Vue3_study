@@ -1,1 +1,4 @@
 .history
+
+myapp/node_modules
+myapp/.vscode/*
