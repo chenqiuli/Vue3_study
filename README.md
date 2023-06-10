@@ -494,61 +494,185 @@ ul li {
 </style>
 ```
 
-- 父传子： 父传子是单向数据流，父传给子的属性，子不允许修改；如果子要修改，可以将属性赋值成自己状态，或者在计算属性中改
+- 父子通信：
 
-```vue
-<!-- 父组件 -->
-<template>
-  <!-- 1.单个单个透传，动态属性动态绑定 -->
-  <NavBar :title="title1" left="返回" right="首页" />
-  <!-- 2.在一个对象上传 -->
-  <NavBar
-    v-bind="{
-      title: '我的电影2',
-      left: '返回',
-      right: '首页',
-    }"
-  />
-  <!-- 3.对象放在data内，动态绑定传 -->
-  <NavBar v-bind="navBarObj" />
-</template>
+  - 父传子：是单向数据流，父传给子的属性，子不允许修改；如果子要修改，可以将属性赋值成自己状态，或者在计算属性中改
 
-<script>
-import NavBar from './01-父传子/NavBar.vue';
-export default {
-  data() {
-    return {
-      title1: '我的电影1',
-      navBarObj: {
-        title: '我的电影3',
+  ```vue
+  <!-- 父组件 -->
+  <template>
+    <!-- 1.单个单个透传，动态属性动态绑定 -->
+    <NavBar :title="title1" left="返回" right="首页" />
+    <!-- 2.在一个对象上传 -->
+    <NavBar
+      v-bind="{
+        title: '我的电影2',
         left: '返回',
         right: '首页',
+      }"
+    />
+    <!-- 3.对象放在data内，动态绑定传 -->
+    <NavBar v-bind="navBarObj" />
+  </template>
+
+  <script>
+  import NavBar from './01-父传子/NavBar.vue';
+  export default {
+    data() {
+      return {
+        title1: '我的电影1',
+        navBarObj: {
+          title: '我的电影3',
+          left: '返回',
+          right: '首页',
+        },
+      };
+    },
+    components: {
+      NavBar,
+    },
+  };
+  </script>
+  <!-- 子组件 -->
+  <template>
+    <div>
+      <h2>navbar</h2>
+      <button>{{ left }}</button>
+      <span>{{ computedTitle }}</span>
+      <button>{{ right }}</button>
+    </div>
+  </template>
+  <script>
+  export default {
+    // 第一种写法：接收父组件的props参数，视图层访问不用this，逻辑层访问需要this.xxx
+    props: ['title', 'left', 'right'],
+    // 第二种写法：
+    props: {
+      title: String,
+      left: {
+        type: Boolean,
+        required: true,
       },
-    };
+      right: {
+        type: Boolean,
+        // 默认值，不传也可
+        default: true,
+      },
+      dataList: {
+        type: String,
+        // 自定义类型校验函数
+        validator(value) {
+          return ['success', 'danger', 'error', 'info'].includes(value);
+        },
+      },
+    },
+    computed: {
+      computedTitle() {
+        return this.title + '-加工后的title';
+      },
+    },
+  };
+  </script>
+  ```
+
+  - 子传父：中间人模式。在父组件上定义事件，传给子组件，子组件调用父组件的事件，实现子传父
+
+  ```vue
+  <!-- 父组件 -->
+  <Child title="标题" @event="handleEvent" />
+  <script>
+  handleEvent(value) {
+    console.log('触发了父组件的方法', value);
   },
-  components: {
-    NavBar,
-  },
-};
-</script>
+  </script>
+  <!-- 子组件 -->
+  <button @click="handleClick">点击</button>
+  <button @click="$emit('event', childTilte)">点击</button>
+  <script>
+  handleClick() {
+    // 触发父组件的事件实现通信
+    this.$emit('event', this.childTilte);
+   },
+  </script>
+  ```
+
+- 属性透传：父组件引用子组件时，在子组件上加的属性或方法等，都会透传到子组件的根节点上。如果不想要属性透传，在子组件上禁止透传，设置 `inheritAttrs: false`。如果想要属性透传到其他标签上，设置 `v-bind = "$attrs"`，父组件的属性会与合并到该标签上。
+
+```vue
 <!-- 子组件 -->
 <template>
-  <div>
-    <h2>navbar</h2>
-    <button>{{ left }}</button>
-    <span>{{ computedTitle }}</span>
-    <button>{{ right }}</button>
+  <div class="navbarRoot">
+    <!-- v-bind="$attrs" 让父组件的属性透传到该标签  -->
+    <div v-bind="$attrs" class="aaa" style="font-size: 20px">
+      只有我才可以接收父组件透传下来的属性
+    </div>
   </div>
 </template>
+
 <script>
 export default {
-  // 接收父组件的props参数，视图层访问不用this，逻辑层访问需要this.xxx
-  props: ['title', 'left', 'right'],
-  computed: {
-    computedTitle() {
-      return this.title + '-加工后的title';
+  // 禁止父组件的属性透传
+  inheritAttrs: false,
+};
+</script>
+```
+
+- \$ref：绑定在 dom 节点上，获取 dom 节点元素；绑定在组件上，获取组件的实例对象，一定程度上可以实现父子通信。在 dom 节点或标签上添加 `ref=xxx`, 访问时通过 `this.$ref.xxx`
+
+```js
+<input type="text" ref="username" v-model="username" />;
+this.$refs.username; // 获取input节点，去设置值或样式等
+```
+
+- $root && $parent：$root 访问根节点，$parent 访问父组件
+
+```js
+this.$parent.value; // 访问父组件的value
+this.$parent.$parent.value; // 访问爷爷组件的value
+this.$root.value; // 访问根组件的value
+```
+
+- 跨级通信：provide && inject。嵌套多级的子组件，想要共享父组件的数据时
+
+```js
+// 父组件做生产者
+provide() {
+  return {
+    // 把app这一整个组件实例传下去，响应式的Proxy对象才能修改app的属性,
+    app: this,
+  };
+},
+// 子组件做消费者，接收父组件共享的属性
+{
+  inject: ['app'],
+  methods: {
+    handleHome() {
+      console.log(this.title, this.app);
     },
   },
+}
+<span @click="handleClick2">{{ app.title }}</span>
+
+handleClick2() {
+  // this.app 是响应式的，可以修改父组件的data
+  console.log(this.app);
+  this.app.title = this.data;
+},
+```
+
+- 跨级通信：订阅发布设计模式实现
+
+- 动态组件：通过`<component :is="which" />`，which 是组件名字，vue2 需要在组件内部显示声明组件名字，vue3 在 setup 下自动生成组件名字。动态组件配合<KeepAlive>可以缓存想缓存的组件。
+
+```vue
+<KeepAlive include="home,list">
+  <component :is="which" />
+</KeepAlive>
+
+<script>
+export default {
+  // vue2：声明组件名字
+  name: 'center',
 };
 </script>
 ```

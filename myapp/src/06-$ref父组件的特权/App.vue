@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- ref绑定在dom节点上 -->
+    <!-- ref绑定在dom节点上，获取dom节点 -->
     <input type="text" ref="username" v-model="username" />
     <button @click="handleClick">点击</button>
   </div>
