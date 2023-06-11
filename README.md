@@ -313,8 +313,7 @@ if (支持Proxy) {
   </script>
   ```
 
-  - v-model：表单与数据 双向绑定
-    - 原理：表单上动态绑定 value 值，通过 onChange 事件改变 value 值，实现双向绑定
+  - 表单上的 `v-model`：表单上动态绑定 value 值，通过 onChange 事件改变 value 值，实现双向绑定
 
   ```html
   <div id="root">
@@ -355,6 +354,77 @@ if (支持Proxy) {
   </script>
   ```
 
+  - 组件上的 `v-model`原理：父组件传递一个受控属性给子组件，子组件接收并设置为控件的 value 值，并调用父组件传递的回调方法触发改变父组件的受控属性，实现双向绑定
+
+  ```vue
+  <!-- 父组件 -->
+  <Field :value="username" @event="handleEvent" />
+  <script>
+  export default {
+    data() {
+      return {
+        username: '11',
+      };
+    },
+    methods: {
+      handleEvent(value) {
+        console.log(value);
+        this.username = value;
+      },
+    },
+    components: {
+      Field,
+    },
+  };
+  </script>
+  <!-- Field子组件 -->
+  <template lang="">
+    <div>
+    {{ label }}-{{ value }}
+    <input :type="type" :value="value" @input="handleInput"> </div>
+  </template>
+  <script>
+  export default {
+    props: ['label', 'type', 'value'],
+    methods: {
+      handleInput(evt) {
+        this.$emit('event', evt.target.value);
+      },
+    },
+  };
+  </script>
+  ```
+
+  - 组件上的 `v-model` 语法糖：父组件使用 v-model="xxx"，子组件接收是 modelValue，触发的回调函数名称是`update:modelValue`。也支持修改别名
+
+  ```vue
+  <!-- 父组件 -->
+  <template>
+    <Field v-model="username" />
+    <!-- 被解析为
+    <Field
+      :modelValue="username"
+      @update:modelValue="(newValue) => (username = newValue)"
+    /> -->
+  </template>
+  <script>
+  export default {
+    data() {
+      return {
+        username: 'sss',
+      };
+    },
+  };
+  </script>
+  <!-- Field子组件 -->
+  <template>
+    <div>
+      {{ label }}-{{ modelValue }}
+      <input :type="type" :value="modelValue" @input="$emit('update:qiuli', evt.target.value);"> </div>
+    </div>
+  </template>
+  ```
+
   - v-model 表单修饰符
     - v-model.lazy
     - v-model.number
@@ -372,6 +442,44 @@ if (支持Proxy) {
     <input type="text" v-model.trim="input3" />
     {{input3}}
   </div>
+  ```
+
+  - v-slot：插槽，简写为#，父组件使用插槽时只能用在 template 标签或子组件标签上。有多个插槽的时候，使用具名插槽。
+
+  ```vue
+  <!-- 普通插槽 -->
+  <Child> 我是Child组件的内容 </Child>
+  <!-- Child组件 -->
+  <template>
+    <div>
+      <h2>Child组件</h2>
+      <slot></slot>
+    </div>
+  </template>
+  <!-- 具名插槽 -->
+  <template>
+    <div>
+      <Child>
+        <template v-slot:header> Header头部 </template>
+        <template v-slot:main>Main主区域</template>
+        <template #footer>Footer底部</template>
+      </Child>
+    </div>
+  </template>
+  <!-- Child组件 -->
+  <template>
+    <div>
+      <header>
+        <slot name="header"></slot>
+      </header>
+      <main>
+        <slot name="main"></slot>
+      </main>
+      <footer>
+        <slot name="footer"></slot>
+      </footer>
+    </div>
+  </template>
   ```
 
 - computed 计算属性：会缓存，只会执行一次，重复调用从缓存读取。计算属性可读可写，视图层当属性调用
@@ -676,6 +784,43 @@ export default {
 };
 </script>
 ```
+
+- 异步组件：让组件按需加载，可以优化首屏加载速度
+
+```js
+List: defineAsyncComponent({
+  // 加载函数
+  loader: () => import('./List.vue'),
+
+  // 加载异步组件时使用的组件
+  loadingComponent: LoadingComponent,
+  // 展示加载组件前的延迟时间，默认为 200ms
+  delay: 200,
+
+  // 加载失败后展示的组件
+  errorComponent: ErrorComponent,
+  // 如果提供了一个 timeout 时间限制，并超时了
+  // 也会显示这里配置的报错组件，默认值是：Infinity
+  timeout: 1000,
+}),
+```
+
+- 生命周期钩子函数
+
+  - 创建
+
+    - beforeCreate：拿不到数据层
+    - created：拿得到数据层，一般初始化数据
+    - beforeMount：拿到数据层，拿不到 DOM 节点
+    - mounted： 1.拿到 DOM 节点 2.ajax 3.订阅发布 4.window 全局事件绑定
+
+  - 更新
+    - beforeUpdate：更新之前做点事情
+    - updated：所有状态改变都会执行这个钩子函数
+    - nextTick：特定状态改变才执行更新，使用时 `this.$nextTick()`
+  - 销毁
+    - beforeUnmount
+    - unmounted：组件卸载时，手动清空 window 上挂载的事件或全局定义的定时器
 
 ### 三、Vue2 与 Vue3 的区别
 

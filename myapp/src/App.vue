@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import App from './10-动态组件/App.vue';
+import App from './14-生命周期/03-销毁/App.vue';
 
 export default {
   data() {
