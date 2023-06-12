@@ -822,6 +822,49 @@ List: defineAsyncComponent({
     - beforeUnmount
     - unmounted：组件卸载时，手动清空 window 上挂载的事件或全局定义的定时器
 
+- 自定义指令：拿到 dom 节点，对 dom 节点操作。指令也有生命周期，常用的有 mounted 和 updated。以局部自定义指令为例.
+
+```vue
+<template>
+  <div>
+    <div v-niki>111</div>
+    <div v-niki="'blue'">222</div>
+    <div v-niki="'green'">333</div>
+    <div v-niki="whichColor">333</div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      whichColor: 'gray',
+    };
+  },
+  // 局部自定义指令
+  directives: {
+    // niki: {
+    //   // 只会在初始化执行一次，如果指令的值是状态，状态修改完后没有再次触发
+    //   mounted(el, binding) {
+    //     console.log(el, binding);
+    //     el.style.background = binding.value ?? 'red';
+    //   },
+    //   // 所以状态更新，重新触发一次
+    //   updated(el, binding) {
+    //     console.log(el, binding);
+    //     el.style.background = binding.value ?? 'red';
+    //   },
+    // },
+
+    // 官方提供了函数写法简写mounted和updated生命周期
+    niki(el, binding) {
+      console.log(el, binding);
+      el.style.background = binding.value ?? 'red';
+    },
+  },
+};
+</script>
+```
+
 ### 三、Vue2 与 Vue3 的区别
 
 - Vue2 有 filters，Vue3 抛弃了
