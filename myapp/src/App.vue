@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import App from './17-自定义指令/Swiper-指令.vue';
+import App from './18-VCA-composition Api/10-setup语法糖/App.vue';
 
 export default {
   data() {

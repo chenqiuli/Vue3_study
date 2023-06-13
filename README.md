@@ -2,6 +2,8 @@
 
 ### 一、基础语法
 
+- Vue3 包含 `Option Api(VOA)` 和 `Composition Api(VCA)`
+
 - CDN 使用：`<script src="https://unpkg.com/vue @3/dist/vue.global.js"> </script>`
 
 - Vue2 拦截的原理：Object.defineProperty
@@ -52,6 +54,8 @@ if (支持Proxy) {
   Object.defineProperty;
 }
 ```
+
+### 二、Option Api
 
 - 模板语法：插值，双大括号，当做 JS 地盘执行，可以数字运算，三元运算符
 
@@ -558,7 +562,7 @@ if (支持Proxy) {
   </script>
   ```
 
-### 二、[Vite](https://cn.vitejs.dev/guide/) + Vue
+### 三、[Vite](https://cn.vitejs.dev/guide/) + Vue 的 Option Api
 
 - 使用 Vite 安装
 
@@ -865,7 +869,330 @@ export default {
 </script>
 ```
 
-### 三、Vue2 与 Vue3 的区别
+### 四、[Vite](https://cn.vitejs.dev/guide/) + Vue 的 Composition Api(函数式编程)
+
+- setup: 生命周期函数-页面初始化即执行，setup(props,trigger)，props 是父组件传递的属性，trigger 内含很多事件，常用的是 emit
+
+- reactive：把对象变成响应式的, 底层是用 Proxy 拦截，视图层和事件内要用导出的 state 对象去访问属性
+
+```vue
+<template>
+  <div>
+    <div>{{ state.count }}</div>
+    <button @click="handleClick">click</button>
+  </div>
+</template>
+
+<script>
+import { reactive } from 'vue';
+export default {
+  setup() {
+    const state = reactive({
+      count: 0,
+    });
+    const handleClick = () => {
+      console.log('handleClick');
+      state.count++;
+    };
+    return {
+      state,
+      handleClick,
+    };
+  },
+};
+</script>
+```
+
+- ref: ref 不仅可以绑定 dom 节点，可以绑定组件，还可以包装元素，让它变成响应式的，底层还是用的 Proxy 拦截，但是 Proxy 只能包装对象，所以直接用 ref 包裹元素，Proxy 会把它变成 new Proxy({ value: 0 })，在视图层使用直接使用变量名，在事件中要用变量名.value
+
+```vue
+<template>
+  <div>
+    {{ count }}
+    <button @click="handleClick">click</button>
+  </div>
+</template>
+<script>
+import { ref } from 'vue';
+export default {
+  setup() {
+    const count = ref(0);
+    const handleClick = () => {
+      // console.log(count);
+      count.value++;
+    };
+    return {
+      count,
+      handleClick,
+    };
+  },
+};
+</script>
+```
+
+- reactive 和 ref 互相转换
+
+```vue
+<!-- reactive 转 ref -->
+<template>
+  <div>
+    {{ name }}-{{ age }}
+    <button @click="handleClick">click</button>
+  </div>
+</template>
+
+<script>
+import { reactive, toRefs } from 'vue';
+export default {
+  setup() {
+    const state = reactive({
+      name: 'niki',
+      age: 18,
+    });
+    const handleClick = () => {
+      state.name = 'niki-click';
+      state.age = 20;
+    };
+    return {
+      handleClick,
+      // 对state对象内的属性统一转换
+      ...toRefs(state),
+    };
+  },
+};
+</script>
+<!-- ref 转 reactive -->
+<template>
+  <div>
+    {{ state.name }} - {{ state.age }} - {{ state.location }}
+    <button @click="handleClick">click</button>
+  </div>
+</template>
+<script>
+import { reactive, toRef } from 'vue';
+export default {
+  setup() {
+    const name = toRef('niki');
+    const age = toRef(18);
+    const state = reactive({
+      location: '广东',
+      // 把ref转成reactive
+      name,
+      age,
+    });
+    const handleClick = () => {
+      name.value = 'niki-click';
+      age.value = 20;
+      state.location = '汕头';
+    };
+    return {
+      state,
+      handleClick,
+    };
+  },
+};
+</script>
+```
+
+- computed 计算属性
+
+```vue
+<template>
+  <div>
+    {{ computedName }}
+  </div>
+</template>
+<script>
+import { computed } from 'vue';
+export default {
+  setup() {
+    const computedName = computed(
+      () => state.name.slice(0, 1).toUpperCase() + state.name.slice(1)
+    );
+    return {
+      computedName,
+    };
+  },
+};
+</script>
+```
+
+- watch 侦听器
+  - 第一次页面展示不会立刻执行，等状态变化再执行
+  - 参数可以拿到当前值和原始值
+  - 可以侦听多个状态的变化
+
+```vue
+<template>
+  <div>
+    <input type="text" v-model="mytext" />
+    <select v-model="select">
+      <option value="111">111</option>
+      <option value="222">222</option>
+      <option value="333">333</option>
+    </select>
+  </div>
+</template>
+<script>
+import { ref, watch } from 'vue';
+export default {
+  setup() {
+    const mytext = ref('');
+    const select = ref(111);
+    // 写法一
+    watch(
+      mytext,
+      (newvalue, oldvalue) => {
+        console.log('ajax', newvalue, oldvalue);
+      },
+      // 一上来就触发
+      { immediate: true }
+    );
+    // 写法二
+    // watch(
+    //   () => mytext.value,
+    //   (newvalue, oldvalue) => {
+    //     console.log(newvalue, oldvalue);
+    //   }
+    // );
+    // 写法三：多个侦听
+    // watch([mytext, select], (newvalue, oldvalue) => {
+    //   console.log(newvalue, oldvalue);
+    // });
+    return {
+      mytext,
+      select,
+    };
+  },
+};
+</script>
+```
+
+- watchEffect
+  - 第一次页面展示立刻执行
+  - 不需要监听，代码中有状态变化就执行
+  - 不需要传递很多参数，只要传递一个回调函数
+  - 不能获取当前值和原始值
+
+```js
+watchEffect(async () => {
+  const res = await axios(`http://localhost:3000/list?author=${select.value}`);
+  selectList.value = res.data;
+});
+```
+
+- 属性传递
+
+```vue
+<!-- 父组件 -->
+<template>
+  <div>
+    <NavBar
+      :title="title"
+      :left="true"
+      :right="true"
+      @leftevent="handleEvent"
+    />
+  </div>
+</template>
+<script>
+import { ref } from 'vue';
+import NavBar from './Navbar.vue';
+export default {
+  components: {
+    NavBar,
+  },
+  setup() {
+    const title = ref('首頁');
+    const handleEvent = (value) => {
+      console.log('handleEvent', value);
+    };
+    return {
+      title,
+      handleEvent,
+    };
+  },
+};
+</script>
+<!-- 子组件 -->
+<template>
+  <div>
+    <button v-show="left" @click="handleLeft">返回</button>
+    <span>{{ computedTitle }}</span>
+    <button v-show="right">首页</button>
+  </div>
+</template>
+<script>
+import { computed } from 'vue';
+export default {
+  props: {
+    left: Boolean,
+    right: Boolean,
+    title: String,
+  },
+  // setup的第一个参数是props参数
+  setup(props, trigger) {
+    const computedTitle = computed(() => props.title + '1111');
+    const handleLeft = () => {
+      trigger.emit('leftevent', '来自子组件的问候');
+    };
+    return {
+      computedTitle,
+      handleLeft,
+    };
+  },
+};
+</script>
+```
+
+- provide 与 inject 跨级通信：子组件拿到父组件共享的属性，都是响应式的
+
+```vue
+<!-- 父组件 -->
+<script>
+import { provide, ref } from 'vue';
+export default {
+  setup() {
+    const which = ref('List');
+    const show = ref(true);
+    // 生产者
+    provide('which', which);
+    provide('show', show);
+    return {
+      which,
+      show,
+    };
+  },
+};
+</script>
+<!-- 子组件 -->
+<script>
+import { inject, onMounted } from 'vue';
+export default {
+  setup() {
+    const show = inject('show');
+    onMounted(() => {
+      show.value = false;
+    });
+  },
+};
+</script>
+```
+
+- 生命周期
+
+  - setup：相当于 beforeCreated 和 created
+  - onBeforeMount
+  - onMounted
+  - onBeforeUpdate
+  - onUpdated
+  - nextTick
+  - onBeforeUnmount
+  - onUnmounted
+
+- setup 语法糖：`<script setup></script>`
+
+### FAQ、Vue2 与 Vue3 的区别
 
 - Vue2 有 filters，Vue3 抛弃了
 - Vue2 单文件组件的 template 内需用一个根节点包裹，Vue3 可以多节点并存
