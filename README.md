@@ -1192,7 +1192,220 @@ export default {
 
 - setup 语法糖：`<script setup></script>`
 
-### 五、Vue-Router：单页应用
+### 五、[Vue-Router](https://router.vuejs.org/zh/guide/)
+
+- 路由使用
+
+```js
+// 路由定制
+import { createRouter, createWebHistory } from 'vue-router';
+
+const routes = [
+  { path: '/', redirect: '/films' },
+  // {
+  //   path: '/',
+  //   redirect: { name: 'filmspage' } // 跳到命名路由为filmspage的页面
+  // },
+  {
+    path: '/films',
+    component: () => import('../views/films/Films.vue'),
+    // name: 'filmspage', // 命名路由
+    children: [
+      // 嵌套路由
+      {
+        path: 'nowplaying',
+        component: () => import('../views/films/components/Nowplaying.vue'),
+      },
+      {
+        path: 'comingsoon',
+        component: () => import('../views/films/components/Comingsoon.vue'),
+      },
+      {
+        path: '/films',
+        redirect: '/films/nowplaying',
+      },
+    ],
+  },
+  {
+    path: '/cinemas',
+    component: () => import('../views/Cinemas.vue'),
+  },
+  {
+    path: '/center',
+    alias: '/wode', // 别名，/wode和/center都可以访问我的页面
+    component: () => import('../views/Center.vue'),
+    // 需要路由守卫拦截的页面
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/detail/:id', // params 动态路由传参
+    component: () => import('../views/Detail.vue'),
+    name: 'detailpage',
+  },
+  // {
+  //   path: "/detail", // query 路由传参
+  //   component: Detail,
+  //   name: 'detailpage'
+  // },
+  {
+    path: '/login',
+    name: 'loginpage',
+    component: () => import('../views/Login.vue'),
+  },
+  {
+    path: '/:pathMatch(.*)*', // 匹配 /aaa /aaa/bbb /aa/bb/cc ...
+    component: () => import('../views/NotFound.vue'),
+  },
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+// 全局路由守卫拦截
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('token');
+  if (to.name !== 'loginpage' && !isAuthenticated && to.meta.auth)
+    next({ name: 'loginpage' });
+  else next();
+});
+
+// 对于分析、更改页面标题、声明页面等辅助功能
+router.afterEach((to, from) => {
+  // console.log(to.fullPath);
+});
+
+export default router;
+
+// 路由注册
+createApp(App).use(router).mount('#app');
+```
+
+- 声明式导航 `router-link`：custom 定制化渲染标签，在 router-link 插槽内直接写标签，会渲染成这种结构的 dom 结构
+
+```html
+<ul>
+  <!-- router-link：custom 定制化渲染标签，在router-link插槽内直接写标签，会渲染成这种结构的dom结构 -->
+  <router-link to="/films" custom v-slot="{ isActive, navigate }">
+    <li @click="navigate" :class="isActive ? 'nikiActive' : ''">电影</li>
+  </router-link>
+  <router-link to="/cinemas" custom v-slot="{ isActive, navigate }">
+    <li @click="navigate" :class="isActive ? 'nikiActive' : ''">影院</li>
+  </router-link>
+  <router-link to="/center" custom v-slot="{ isActive, navigate }">
+    <li @click="navigate" :class="isActive ? 'nikiActive' : ''">我的</li>
+  </router-link>
+</ul>
+<style>
+  .nikiActive {
+    color: red !important;
+  }
+</style>
+```
+
+- 动态路由：
+
+```js
+const routes = [
+  {
+    path: '/detail/:id', // params 动态路由传参
+    component: () => import('../views/Detail.vue'),
+    name: 'detailpage',
+  },
+];
+```
+
+- 编程式导航：`useRouter`
+
+```js
+import { useRouter } from 'vue-router';
+const router = useRouter();
+// 1.params传参方式：两种写法  /detail/:id
+router.push(`/detail/${filmId}`);
+router.push({
+  name: 'detailpage', // detail路由页面的命名路由
+  params: {
+    id: filmId, // id是动态路由占位符
+  },
+});
+2.query传参方式：/detail?id=1000   /detail
+router.push({
+  path: '/detail', // detail路由页面的命名路由
+  query: {
+    id: filmId, // id是动态路由占位符
+  },
+});
+```
+
+- 动态路由页面获取参数
+
+```js
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
+const route = useRoute();
+const router = useRouter();
+onMounted(() => {
+  console.log('mounted ajax', route.params.id); // params传参
+  // console.log('mounted', route.query.id);// query传参
+});
+// 猜你喜欢点击功能
+const handleClick = () => {
+  router.push(`/detail/1000`);
+};
+onBeforeRouteUpdate((to, from) => {
+  // 在当前路由改变，但是该组件被复用时调用，猜你喜欢点击后跳转当前页面
+  console.log('mounted ajax', to.params.id);
+});
+```
+
+- 路由模式：
+
+  - hash：`createWebHashHistory` url 带#，通过 window.onhashchange 监听 url 的变化
+  - history：`createWebHistory` 利用了浏览器的历史堆栈（history stack）来实现无刷新的页面导航
+
+- 全局路由守卫： `beforeEach` 和 `afterEach`
+
+```js
+// 全局拦截，后台管理系统 所有页面需要鉴权
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('token');
+  if (to.name !== 'loginpage' && !isAuthenticated) next({ name: 'loginpage' });
+  else next();
+});
+
+// 某些页面需要鉴权，通过to.path判断或者to.meta
+router.beforeEach((to, from, next) => {
+  // console.log(to.path);
+  const isAuthenticated = localStorage.getItem('token');
+  if (
+    (to.name !== 'loginpage' && !isAuthenticated && to.path === '/center') ||
+    to.path === '/wode'
+  )
+    next({ name: 'loginpage' });
+  else next();
+});
+router.beforeEach((to, from, next) => {
+  // console.log(to);
+  const isAuthenticated = localStorage.getItem('token');
+  if (to.name !== 'loginpage' && !isAuthenticated && to.meta.auth)
+    next({ name: 'loginpage' });
+  else next();
+});
+
+// 对于分析、更改页面标题、声明页面等辅助功能
+router.afterEach((to, from) => {
+  // console.log(to.fullPath);
+});
+```
+
+- 路由懒加载：拆分 JS 代码打包体积，按需加载，优化首屏加载速度
+
+```js
+// import Center from "../views/Center.vue";
+const Center = () => import('../views/Center.vue'),
+```
 
 ### FAQ、Vue2 与 Vue3 的区别
 

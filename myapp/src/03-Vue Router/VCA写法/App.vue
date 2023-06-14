@@ -6,8 +6,13 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import TabBar from './components/Tabbar.vue';
+export default {
+  components: {
+    TabBar,
+  },
+};
 </script>
 
 <style>

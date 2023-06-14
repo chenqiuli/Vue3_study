@@ -3,8 +3,18 @@
 </template>
 
 <script>
+import { onBeforeRouteLeave } from 'vue-router';
+
 export default {
-  // 组件渲染前调用，通常做组件内的拦截
+  setup() {
+    onBeforeRouteLeave((to, from) => {
+      // 在组件离开前调用
+      const answer = window.confirm('你确定离开我吗');
+      if (!answer) return false;
+    });
+  },
+
+  // beforeRouteEnter 在VCA中没有对应的钩子函数，所以还是得用VOA的方式去写
   async beforeRouteEnter(to, from, next) {
     const isAuthenticated = await localStorage.getItem('token');
     if (isAuthenticated) {
@@ -12,12 +22,6 @@ export default {
     } else {
       next({ path: '/login' });
     }
-  },
-
-  beforeRouteLeave(to, from) {
-    // 在组件离开前调用
-    const answer = window.confirm('你确定离开我吗');
-    if (!answer) return false;
   },
 };
 </script>

@@ -12,16 +12,19 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-const username = ref('');
-const password = ref('');
-
-const handleLogin = () => {
-  localStorage.setItem('token', 'aaa');
-  router.push('/center');
+<script>
+export default {
+  data() {
+    return {
+      username: '',
+      password: '',
+    };
+  },
+  methods: {
+    handleLogin() {
+      localStorage.setItem('token', 'aaa');
+      this.$router.push('/center');
+    },
+  },
 };
 </script>
