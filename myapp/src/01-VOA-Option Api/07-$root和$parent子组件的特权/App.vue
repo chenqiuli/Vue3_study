@@ -1,20 +1,20 @@
 <template>
   <div>
-    <Child />
+    <Parent />
   </div>
 </template>
 
 <script>
-import Child from './Child.vue';
+import Parent from './Parent.vue';
 
 export default {
   data() {
     return {
-      value: 'Parent',
+      value: 'App-根',
     };
   },
   components: {
-    Child,
+    Parent,
   },
 };
 </script>

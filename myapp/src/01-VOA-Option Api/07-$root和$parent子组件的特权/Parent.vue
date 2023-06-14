@@ -1,19 +1,20 @@
 <template>
-  <App />
+  <div>
+    <Child />
+  </div>
 </template>
 
 <script>
-import App from './18-VCA-composition Api/10-setup语法糖/App.vue';
+import Child from './Child.vue';
 
 export default {
   data() {
     return {
-      value: 'app-根',
+      value: 'Parent-父',
     };
   },
-
   components: {
-    App,
+    Child,
   },
 };
 </script>

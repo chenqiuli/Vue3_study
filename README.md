@@ -1192,6 +1192,8 @@ export default {
 
 - setup 语法糖：`<script setup></script>`
 
+### 五、Vue-Router：单页应用
+
 ### FAQ、Vue2 与 Vue3 的区别
 
 - Vue2 有 filters，Vue3 抛弃了
