@@ -8,27 +8,31 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted } from 'vue';
-import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
-const route = useRoute();
-const router = useRouter();
-onMounted(() => {
-  // 接收动态路由传递的id
-  console.log('mounted ajax', route.params.id);
-  // console.log('mounted', route.query.id);
-});
-const handleBack = () => {
-  router.back();
-  router.go(-1);
+<script>
+export default {
+  mounted() {
+    // 接收动态路由传递的id
+    console.log('mounted ajax', this.$route.params.id);
+    // console.log('mounted', this.$route.query.id);
+  },
+  methods: {
+    handleBack() {
+      this.$router.back();
+      // this.$router.go(-1);
+    },
+    handleClick() {
+      this.$router.push(`/detail/1000`);
+    },
+  },
+  // watch: {
+  //   '$route.params': function () {
+  //     console.log('mounted ajax', this.$route.params.id);
+  //   },
+  // },
+  beforeRouteUpdate(to, from) {
+    // console.log(to);
+    // 在当前路由改变，但是该组件被复用时调用
+    console.log('mounted ajax', to.params.id);
+  },
 };
-
-const handleClick = () => {
-  router.push(`/detail/1000`);
-};
-
-onBeforeRouteUpdate((to, from) => {
-  // 在当前路由改变，但是该组件被复用时调用
-  console.log('mounted ajax', to.params.id);
-});
 </script>
