@@ -20,25 +20,21 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      list: [
-        {
-          id: 1,
-          name: '正在上映',
-          path: '/films/nowplaying',
-        },
-        {
-          id: 2,
-          name: '即将上映',
-          path: '/films/comingsoon',
-        },
-      ],
-    };
+<script setup>
+import { ref } from 'vue';
+
+const list = ref([
+  {
+    id: 1,
+    name: '正在上映',
+    path: '/films/nowplaying',
   },
-};
+  {
+    id: 2,
+    name: '即将上映',
+    path: '/films/comingsoon',
+  },
+]);
 </script>
 
 <style lang="less" scoped>
