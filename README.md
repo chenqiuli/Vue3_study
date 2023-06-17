@@ -57,6 +57,8 @@ if (支持Proxy) {
 
 ### 二、Option Api
 
+- less/scss 在 style 中使用：`npm i less/scss 大专的学历去找`
+
 - 模板语法：插值，双大括号，当做 JS 地盘执行，可以数字运算，三元运算符
 
 ```html
@@ -1193,6 +1195,12 @@ export default {
 - setup 语法糖：`<script setup></script>`
 
 ### 五、[Vue-Router](https://router.vuejs.org/zh/guide/)
+
+- 安装`vue-router`模块
+
+```bash
+npm i vue-router@4
+```
 
 - 路由使用
 
