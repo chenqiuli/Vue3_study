@@ -1339,7 +1339,7 @@ router.push({
     id: filmId, // id是动态路由占位符
   },
 });
-2.query传参方式：/detail?id=1000   /detail
+// 2.query传参方式：/detail?id=1000   /detail
 router.push({
   path: '/detail', // detail路由页面的命名路由
   query: {
@@ -1413,6 +1413,199 @@ router.afterEach((to, from) => {
 ```js
 // import Center from "../views/Center.vue";
 const Center = () => import('../views/Center.vue'),
+```
+
+### 六、Vuex 的 VCA 分模块化写法
+
+- 安装 vuex 和 vuex-persistedstate 持久化插件
+
+```bash
+npm i vuex vuex-persistedstate
+```
+
+- 定义 CinemaModule 模块
+
+```js
+import { GET_CINEMA_LIST } from '../mutation-types';
+import axios from 'axios';
+
+const CinemaModule = {
+  namespaced: true, // 命名空间
+  state() {
+    return {
+      cinemaList: [],
+    };
+  },
+  // 同步
+  mutations: {
+    [GET_CINEMA_LIST](state, { payload }) {
+      state.cinemaList = payload;
+    },
+  },
+  // 同步+异步
+  actions: {
+    async fetchCinemaList(state, { payload }) {
+      // console.log(state, payload);
+      const res = await axios({
+        url:
+          'https://m.maizuo.com/gateway?cityId=440300&ticketFlag=1&k=3873125',
+        headers: {
+          'X-Client-Info':
+            '{"a":"3000","ch":"1002","v":"5.2.1","e":"16789325361560653676412929"}',
+          'X-Host': 'mall.film-ticket.cinema.list',
+        },
+      });
+      // 异步请求完成之后触发一个commit同步改变state的数据
+      state.commit({
+        type: GET_CINEMA_LIST,
+        payload: res.data.data.cinemas,
+      });
+    },
+  },
+  // state的计算属性，当state内的状态需要处理又需要共享时
+  getters: {
+    filterCinemaList(state) {
+      return (type) => {
+        return state.cinemaList.filter((item) => item.eTicketFlag === type);
+      };
+    },
+  },
+};
+
+export default CinemaModule;
+```
+
+- 引入 CinemaModule 模块
+
+```js
+import { createStore } from 'vuex';
+import CinemaModule from './module/CinemaModule';
+// vuex持久化
+import createPersistedState from 'vuex-persistedstate';
+const store = createStore({
+  plugins: [
+    createPersistedState({
+      reducer: (state) => {
+        return {
+          cinemaList: state.CinemaModule.cinemaList,
+          // ...
+        };
+      },
+    }),
+  ],
+  modules: {
+    // ...
+    CinemaModule,
+  },
+});
+export default store;
+```
+
+- 全局注册 store
+
+```js
+import { createApp } from 'vue';
+import './style.css';
+import App from './04-Vuex/VCA写法/App.vue';
+import store from './04-Vuex/VCA写法/store';
+import router from './04-Vuex/VCA写法/router';
+createApp(App).use(router).use(store).mount('#app');
+```
+
+- 页面访问 store 的 state 和 getters
+
+```js
+import { useStore } from 'vuex';
+const store = useStore();
+// 访问state
+store.state.CinemaModule.cinemaList;
+// 访问getters
+store.getters[`CinemaModule/filterCinemaList`](type);
+```
+
+- 页面访问 actions
+
+```js
+store.dispatch({
+  type: 'CinemaModule/fetchCinemaList',
+  payload: '参数传递测试',
+});
+```
+
+### 七、Pinia：分 Option Store 写法和 Setup Store 写法，只是 stroe 写法不同，页面中使用一样，在这里记录 Setup Store 写法。每一个 store 都以 use 开头
+
+- 安装 Pinia
+
+```bash
+npm i pinia
+```
+
+- 定义 useCinemaStore
+
+```js
+import { defineStore } from 'pinia';
+import axios from 'axios';
+import { computed, ref } from 'vue';
+
+export const useCinemaStore = defineStore('cinema', () => {
+  const cinemaList = ref([]);
+
+  const fetchCinemaList = async (payload) => {
+    console.log(payload);
+    const res = await axios({
+      url: 'https://m.maizuo.com/gateway?cityId=440300&ticketFlag=1&k=3873125',
+      headers: {
+        'X-Client-Info':
+          '{"a":"3000","ch":"1002","v":"5.2.1","e":"16789325361560653676412929"}',
+        'X-Host': 'mall.film-ticket.cinema.list',
+      },
+    });
+    // 异步请求完成之后改变state的数据
+    cinemaList.value = res.data.data.cinemas;
+  };
+
+  // computed替换getters
+  const test = computed(() => 'test');
+
+  const filterCinemaList = computed(() => {
+    return (type) => {
+      return cinemaList.value.filter((item) => item.eTicketFlag === type);
+    };
+  });
+
+  return {
+    cinemaList,
+    fetchCinemaList,
+    test,
+    filterCinemaList,
+  };
+});
+```
+
+- 全局注入 Pinia
+
+```js
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import './style.css';
+import App from './05-Pinia/App.vue';
+import router from './05-Pinia/router';
+createApp(App).use(router).use(createPinia()).mount('#app');
+```
+
+- 页面访问 store 的 state 、getters[computed] 和 actions[methods]
+
+```js
+import { useCinemaStore } from '../store/Setup Store写法/useCinemaStore';
+const store = useCinemaStore();
+// 访问state
+store.cinemaList;
+// 访问computed属性，getters
+store.filterCinemaList(type);
+// 访问methods，actions
+store.fetchCinemaList({
+  payload: '参数传递',
+});
 ```
 
 ### FAQ、Vue2 与 Vue3 的区别

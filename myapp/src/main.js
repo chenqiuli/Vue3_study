@@ -1,8 +1,7 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import './style.css';
-import App from './04-Vuex/VCA写法/App.vue';
-import router from "./04-Vuex/VCA写法/router";
-import store from "./04-Vuex/VCA写法/store";
+import App from './05-Pinia/App.vue';
+import router from "./05-Pinia/router";
 
-
-createApp(App).use(router).use(store).mount('#app');
+createApp(App).use(router).use(createPinia()).mount('#app');
