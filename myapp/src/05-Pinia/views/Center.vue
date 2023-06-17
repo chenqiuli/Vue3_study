@@ -1,11 +1,19 @@
 <template>
-  <div>Center</div>
+  <div>
+    Center
+    <van-button type="primary">主要要按钮</van-button>
+  </div>
 </template>
 
 <script>
 import { onBeforeRouteLeave } from 'vue-router';
-
+// import { Button } from 'vant';
+// console.log(Button.name); // van-button
 export default {
+  // components: {
+  //   [Button.name]: Button,
+  // },
+
   setup() {
     onBeforeRouteLeave((to, from) => {
       // 在组件离开前调用

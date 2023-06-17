@@ -1,6 +1,11 @@
 <template>
   <div class="flims">
-    <div class="lunbo">轮播图</div>
+    <van-swipe class="my-swipe" :autoplay="1000" indicator-color="red">
+      <van-swipe-item>1</van-swipe-item>
+      <van-swipe-item>2</van-swipe-item>
+      <van-swipe-item>3</van-swipe-item>
+      <van-swipe-item>4</van-swipe-item>
+    </van-swipe>
     <ul class="list">
       <router-link
         :to="path"
@@ -22,6 +27,8 @@
 
 <script setup>
 import { ref } from 'vue';
+// vite.config.js中按需引入了vant组件，使用的时候不需要手动引入
+// import { Swipe as vanSwipe, SwipeItem as vanSwipeItem } from 'vant';
 
 const list = ref([
   {
@@ -38,15 +45,16 @@ const list = ref([
 </script>
 
 <style lang="less" scoped>
-.lunbo {
-  height: 300px;
-}
 .list {
   display: flex;
   width: 100%;
   text-align: center;
   height: 50px;
   line-height: 50px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: white;
   li {
     flex: 1;
     span {
@@ -57,5 +65,13 @@ const list = ref([
 .nikiActive2 {
   color: red;
   border-bottom: 2px solid red;
+}
+
+.my-swipe .van-swipe-item {
+  color: #fff;
+  font-size: 20px;
+  line-height: 150px;
+  text-align: center;
+  background-color: #39a9ed;
 }
 </style>

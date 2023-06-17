@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root">
     <!-- 插槽-路由容器 -->
     <router-view></router-view>
     <TabBar v-show="store.isTabbarShow" />
@@ -16,11 +16,6 @@ const store = useTabbarStore();
 * {
   padding: 0;
   margin: 0;
-}
-body,
-html {
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 li {
   list-style: none;
