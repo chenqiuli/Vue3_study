@@ -566,7 +566,7 @@ if (支持Proxy) {
 
 ### 三、[Vite](https://cn.vitejs.dev/guide/) + Vue 的 Option Api
 
-- 使用 Vite 安装
+- 安装 Vite 项目
 
 ```bash
 npm create vite@latest
@@ -1616,7 +1616,7 @@ export const useCinemaStore = defineStore('cinema', () => {
 });
 ```
 
-- 全局注入 Pinia
+- main.js 全局注入 Pinia
 
 ```js
 import { createApp } from 'vue';
@@ -1685,6 +1685,44 @@ store.fetchCinemaList({
   ```html
   <van-button type="primary">主要要按钮</van-button>
   ```
+
+### 九、[Element Plus](https://element-plus.org/)
+
+- 安装
+
+```bash
+npm install element-plus --save
+npm install -D unplugin-vue-components unplugin-auto-import
+```
+
+- 配置按需加载
+
+```js
+// vite.config.ts
+import { defineConfig } from 'vite';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+
+export default defineConfig({
+  // ...
+  plugins: [
+    // ...
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+  ],
+});
+```
+
+- 使用组件，无需引入
+
+```html
+<el-button type="primary">Primary</el-button>
+```
 
 ### FAQ、Vue2 与 Vue3 的区别
 
