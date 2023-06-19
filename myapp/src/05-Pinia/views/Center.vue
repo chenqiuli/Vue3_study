@@ -22,7 +22,8 @@ export default {
     });
   },
 
-  // beforeRouteEnter 在VCA中没有对应的钩子函数，所以还是得用VOA的方式去写
+  // beforeRouteEnter  在VCA中没有对应的钩子函数，所以还是得用VOA的方式去写
+  // 在进入该路由时执行
   async beforeRouteEnter(to, from, next) {
     const isAuthenticated = await localStorage.getItem('token');
     if (isAuthenticated) {

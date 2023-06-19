@@ -1181,7 +1181,7 @@ export default {
 </script>
 ```
 
-- 生命周期
+- Vue3 的生命周期
 
   - setup：相当于 beforeCreated 和 created
   - onBeforeMount
@@ -1192,7 +1192,7 @@ export default {
   - onBeforeUnmount
   - onUnmounted
 
-- setup 语法糖：`<script setup></script>`
+- setup 语法糖：`<script setup></script>`，不需要 export default {}和 return {}。一个 vue 单文件组件内可以同时有<script setup></script> 和 <script></script>，但是不建议
 
 ### 五、[Vue-Router](https://router.vuejs.org/zh/guide/)
 
@@ -1288,7 +1288,7 @@ router.afterEach((to, from) => {
 
 export default router;
 
-// 路由注册
+// main.js中路由注册
 createApp(App).use(router).mount('#app');
 ```
 
@@ -1414,6 +1414,40 @@ router.afterEach((to, from) => {
 // import Center from "../views/Center.vue";
 const Center = () => import('../views/Center.vue'),
 ```
+
+- 路由钩子
+
+  - beforeRouteEnter：在组件进入前调用，经常做权限控制（在 VCA 中没有对应的钩子函数，所以还是得用 VOA 的方式去写）
+
+  ```js
+  async beforeRouteEnter(to, from, next) {
+    const isAuthenticated = await localStorage.getItem('token');
+    if (isAuthenticated) {
+      next();
+    } else {
+      next({ path: '/login' });
+    }
+  },
+  ```
+
+  - onBeforeRouteLeave：在组件离开前调用，经常做二次确认
+
+  ```js
+  onBeforeRouteLeave((to, from) => {
+    // 在组件离开前调用
+    const answer = window.confirm('你确定离开我吗');
+    if (!answer) return false;
+  });
+  ```
+
+  - onBeforeRouteUpdate：在当前路由改变，但是该组件被复用时调用，经常在猜你喜欢场景
+
+  ```js
+  onBeforeRouteUpdate((to, from) => {
+    // 在当前路由改变，但是该组件被复用时调用
+    console.log('mounted ajax', to.params.id);
+  });
+  ```
 
 ### 六、Vuex 的 VCA 分模块化写法
 
@@ -1593,7 +1627,7 @@ import router from './05-Pinia/router';
 createApp(App).use(router).use(createPinia()).mount('#app');
 ```
 
-- 页面访问 store 的 state 、getters[computed] 和 actions[methods]
+- 页面访问 store 的 state 、getters[computed] 和 actions[methods]（处理同步异步都可以）
 
 ```js
 import { useCinemaStore } from '../store/Setup Store写法/useCinemaStore';
@@ -1607,6 +1641,50 @@ store.fetchCinemaList({
   payload: '参数传递',
 });
 ```
+
+### 八、[Vant4](https://vant-contrib.gitee.io/vant)使用，Vant4 适用于 Vue3
+
+- 安装：`npm i vant`
+- 按需引入组件样式
+
+  - 1. 安装插件
+
+  ```md
+  # 通过 npm 安装
+
+  npm i unplugin-vue-components -D
+
+  # 通过 yarn 安装
+
+  yarn add unplugin-vue-components -D
+
+  # 通过 pnpm 安装
+
+  pnpm add unplugin-vue-components -D
+  ```
+
+  - 2. 配置插件：基于 vite 的项目，在 vite.config.js 文件中配置插件：
+
+  ```js
+  import vue from '@vitejs/plugin-vue';
+  import Components from 'unplugin-vue-components/vite';
+  import { VantResolver } from 'unplugin-vue-components/resolvers';
+
+  export default {
+    plugins: [
+      vue(),
+      Components({
+        resolvers: [VantResolver()],
+      }),
+    ],
+  };
+  ```
+
+  - 使用 Vant 组件：按需加载了，不需要在 script 内引入组件，直接使用即可
+
+  ```html
+  <van-button type="primary">主要要按钮</van-button>
+  ```
 
 ### FAQ、Vue2 与 Vue3 的区别
 

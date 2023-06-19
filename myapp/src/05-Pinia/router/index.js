@@ -56,6 +56,10 @@ const routes = [
     name: "loginpage",
     component: () => import("../views/Login.vue"),
   },
+  {
+    path: "/city",
+    component: () => import("../views/City.vue"),
+  },
   // {
   //   path: "/detail", // query 路由传参
   //   component: Detail,
